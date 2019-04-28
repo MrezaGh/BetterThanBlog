@@ -1,19 +1,22 @@
 package com.td.mreza.betterthanblog;
 
 import android.content.Context;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.util.Log;
 
 
 import org.json.JSONArray;
 
-import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Objects;
+import java.util.TreeMap;
 import java.util.concurrent.CountDownLatch;
 
 public class MessageController {
-    public ArrayList<Integer> cache;
+    public HashMap cache;
+    private HashMap lastTimeChecked;
     NotificationCenter notificationCenter;
-    String fileDir;
     Context context;
     ConnectionManager connectionManager;
     StorageManager storageManager;
@@ -23,49 +26,68 @@ public class MessageController {
         this.notificationCenter = notificationCenter;
         this.connectionManager = new ConnectionManager();
         this.storageManager = new StorageManager(context);
-        this.cache = new ArrayList<>();
+
+        this.cache = new HashMap();
+        this.lastTimeChecked = new HashMap();
 
     }
-    public void fetch(final Boolean fromCache, final int lastNumber){
+    public void fetch(final int postID){
+        final Boolean fromCache = fromCacheOrServer(postID);
         final CountDownLatch latch = new CountDownLatch(1);
         Runnable runnable = new Runnable() {
             @Override
             public void run() {
                 if (fromCache){
                     //todo : review and refactor
-                    int[] numbers = storageManager.load(lastNumber);
-                    if (numbers != null) {
-                        for (int number : numbers) {
-                            cache.add(number);
-                        }
-                        notificationCenter.data_loaded();
-                    }
+                    JSONArray details = storageManager.load(postID);
+
+                    Log.i("response from local: ", details.toString());//todo: remove this
+                    cache.put(String.valueOf(postID), details);
+                    notificationCenter.data_loaded();
 
                 }
                 else {
 //                    int[] numbers = connectionManager.load(lastNumber);
 
                     // if you want all the posts post_id = 0 else if you want a specific post give it's ID
-//                    JSONArray response_json = connectionManager.load(postId);
-                    JSONArray response_json = connectionManager.load(0);
+                    JSONArray response_json = connectionManager.load(postID);
 
                     Log.i("response from server: ", response_json.toString());//todo: remove this
 
                     //todo: cache response in database
-//                    boolean saved = storageManager.save(lastNumber + 10);
-//                    if (numbers != null){
-//                        for (int number : numbers) {
-//                            cache.add(number);
-//                        }
-//                    }
+                    cache.put(postID,response_json);
+                    lastTimeChecked.put(postID,System.currentTimeMillis());
+
+                    boolean saved = storageManager.save(postID, response_json);
                     notificationCenter.data_loaded();
                 }
-                Log.i("cache ", String.valueOf(cache));
+                Log.i("cache ", String.valueOf(cache.toString()));
             }
         };
         Thread fetchThread = new Thread(runnable, "MessageController Fetch thread");
         fetchThread.start();
 
 
+    }
+
+    private Boolean fromCacheOrServer(int postID) {
+        final Boolean fromCache;
+        int fiveMinute = 5*60*1000;
+        Long lastTimeFetched = (Long) lastTimeChecked.get(postID);
+
+        if (!isNetworkAvailable()){
+            fromCache = true;
+            Log.i("network status:", "not connected");// todo : remove
+        }
+        else
+            fromCache = lastTimeFetched != null && (System.currentTimeMillis()-lastTimeFetched) < fiveMinute;
+
+        Log.i("fromCache: ", String.valueOf(fromCache)); //todo : remove
+        return fromCache;
+    }
+    private boolean isNetworkAvailable() {
+        ConnectivityManager connectivityManager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
+        return activeNetworkInfo != null && activeNetworkInfo.isConnected();
     }
 }

@@ -9,13 +9,15 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 
+import org.json.JSONArray;
+
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 //todo : classes should be singleton
 
 public class MainActivity extends AppCompatActivity implements Observer  {
-
 
     LinearLayout linearLayout;
     MessageController messageController;
@@ -43,9 +45,9 @@ public class MainActivity extends AppCompatActivity implements Observer  {
                 int lastNUmber;
                 if (messageController.cache.size() == 0)
                     lastNUmber = 0;
-                else
-                    lastNUmber = messageController.cache.get(messageController.cache.size() - 1);
-                messageController.fetch(false, lastNUmber);
+//                else
+//                    lastNUmber = messageController.cache.get(messageController.cache.size() - 1);
+                messageController.fetch(0);
             }
         });
 
@@ -55,9 +57,9 @@ public class MainActivity extends AppCompatActivity implements Observer  {
                 int lastNUmber;
                 if (messageController.cache.size() == 0)
                     lastNUmber = 0;
-                else
-                    lastNUmber = messageController.cache.get(messageController.cache.size() - 1);
-                messageController.fetch(true, lastNUmber);
+//                else
+//                    lastNUmber = messageController.cache.get(messageController.cache.size() - 1);
+                messageController.fetch(2);
             }
         });
 
@@ -90,14 +92,14 @@ public class MainActivity extends AppCompatActivity implements Observer  {
     }
 
     private void updateList() {
-        List<Integer> list =messageController.cache;
+        HashMap list =messageController.cache;
         ArrayList<TextView> tvs = new ArrayList<>();
-        for (Integer s:list) {
-            TextView tv=new TextView(getApplicationContext());
-            tv.setText(s.toString());
-            tvs.add(tv);
-
-        }
+//        for (Integer s:list) {
+//            TextView tv=new TextView(getApplicationContext());
+//            tv.setText(s.toString());
+//            tvs.add(tv);
+//
+//        }
         Log.i("Threadd", Thread.currentThread().getName());
         ArrayList<TextView> tvsNew = new ArrayList<>();
         for (int i = 0; i <tvs.size() ; i++) {
