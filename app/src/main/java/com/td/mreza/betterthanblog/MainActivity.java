@@ -42,8 +42,8 @@ public class MainActivity extends AppCompatActivity implements Observer  {
     static final int VIEW_MODE_GRIDVIEW=1;
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-//        setContentView(R.layout.activity_main);
-        setContentView(R.layout.mehrdad);
+        setContentView(R.layout.activity_main);
+//        setContentView(R.layout.mehrdad);
 
         notificationCenter = new NotificationCenter();
         messageController = new MessageController(getBaseContext(), notificationCenter);
@@ -53,67 +53,70 @@ public class MainActivity extends AppCompatActivity implements Observer  {
 //        messageController.fetch(false, 0);
 
         //////////
-        stubGrid=(ViewStub)findViewById(R.id.stub_grid);
-        stubList=(ViewStub)findViewById(R.id.stub_list);
+        stubGrid = (ViewStub) findViewById(R.id.stub_grid);
+        stubList = (ViewStub) findViewById(R.id.stub_list);
+
+        ViewStub stubGrid1 = findViewById(R.id.stub_grid);
+
 
         stubGrid.inflate();
         stubList.inflate();
 
-        listView= (ListView) findViewById(R.id.listView);
-        gridView=(GridView)findViewById(R.id.gridView);
+        listView = (ListView) findViewById(R.id.listView);
+        gridView = (GridView) findViewById(R.id.gridView);
 
         getProductList();
 
-        SharedPreferences sharedPreferences= getSharedPreferences("viewMode",MODE_PRIVATE);
-        currentViewMode= sharedPreferences.getInt("currentViewMode",VIEW_MODE_LISTVIEW);
+        SharedPreferences sharedPreferences = getSharedPreferences("viewMode", MODE_PRIVATE);
+        currentViewMode = sharedPreferences.getInt("currentViewMode", VIEW_MODE_LISTVIEW);
 
         listView.setOnItemClickListener(onItemClick);
         gridView.setOnItemClickListener(onItemClick);
 
         swichView();
         //////////
-        Button clearBtn = findViewById(R.id.clear_btn);//done!
-        Button refreshBtn = findViewById(R.id.refresh_btn);//todo:
-        Button getBtn = findViewById(R.id.get_btn);//todo
+//        Button clearBtn = findViewById(R.id.clear_btn);//done!
+//        Button refreshBtn = findViewById(R.id.refresh_btn);//todo:
+//        Button getBtn = findViewById(R.id.get_btn);//todo
 
-        getBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                int lastNUmber;
-                if (messageController.cache.size() == 0)
-                    lastNUmber = 0;
-//                else
-//                    lastNUmber = messageController.cache.get(messageController.cache.size() - 1);
-                messageController.fetch(0);
-            }
-        });
-
-        refreshBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                int lastNUmber;
-                if (messageController.cache.size() == 0)
-                    lastNUmber = 0;
-//                else
-//                    lastNUmber = messageController.cache.get(messageController.cache.size() - 1);
-                messageController.fetch(2);
-            }
-        });
-
-
-        clearBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                linearLayout.removeAllViews();
-                messageController.cache.clear();
-            }
-        });
-
-
+//        getBtn.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                int lastNUmber;
+//                if (messageController.cache.size() == 0)
+//                    lastNUmber = 0;
+////                else
+////                    lastNUmber = messageController.cache.get(messageController.cache.size() - 1);
+//                messageController.fetch(0);
+//            }
+//        });
+//
+//        refreshBtn.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                int lastNUmber;
+//                if (messageController.cache.size() == 0)
+//                    lastNUmber = 0;
+////                else
+////                    lastNUmber = messageController.cache.get(messageController.cache.size() - 1);
+//                messageController.fetch(2);
+//            }
+//        });
+//
+//
+//        clearBtn.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                linearLayout.removeAllViews();
+//                messageController.cache.clear();
+//            }
+//        });
+//
+//
+//    }
+////    private String name;
+////    private Subject topic;
     }
-//    private String name;
-//    private Subject topic;
-
 
     @Override
     public void update() {
@@ -163,8 +166,19 @@ public class MainActivity extends AppCompatActivity implements Observer  {
             stubList.setVisibility(View.GONE);
 
         }
-
+        setAdapters();
     }
+
+    private void setAdapters() {
+        if(VIEW_MODE_LISTVIEW==currentViewMode){
+            listViewAdapter=new ListViewAdapter(this, R.layout.list_item,productList);
+            listView.setAdapter(listViewAdapter);
+        }else {
+            gridViewAdapter=new GridViewAdapter(this, R.layout.grid_item,productList);
+            gridView.setAdapter(gridViewAdapter);
+        }
+    }
+
     public List<Product> getProductList(){
         productList = new ArrayList<>();
         productList.add(new Product("title1","this is body1","hey1"));
