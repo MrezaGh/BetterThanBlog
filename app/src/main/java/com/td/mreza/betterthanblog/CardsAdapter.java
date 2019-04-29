@@ -6,16 +6,14 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import com.guna.dynamicrecyclerview.DummyContent.DummyItem;
-import com.td.mreza.betterthanblog.R;
 
 import java.util.List;
 
 public class CardsAdapter extends RecyclerView.Adapter<CardsAdapter.ViewHolder> {
 
-    private final List<DummyItem> mValues;
+    private final List<DummyContent.DummyItem> mValues;
 
-    public CardsAdapter(List<DummyItem> items) {
+    public CardsAdapter(List<DummyContent.DummyItem> items) {
         mValues = items;
     }
 
@@ -40,7 +38,7 @@ public class CardsAdapter extends RecyclerView.Adapter<CardsAdapter.ViewHolder> 
     public class ViewHolder extends RecyclerView.ViewHolder {
         public final View mView;
         public final TextView mContentView;
-        public DummyItem mItem;
+        public DummyContent.DummyItem mItem;
 
         public ViewHolder(View view) {
             super(view);

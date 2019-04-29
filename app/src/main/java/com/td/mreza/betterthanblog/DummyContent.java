@@ -1,4 +1,4 @@
-package com.guna.dynamicrecyclerview;
+package com.td.mreza.betterthanblog;
 
 import java.util.ArrayList;
 import java.util.HashMap;

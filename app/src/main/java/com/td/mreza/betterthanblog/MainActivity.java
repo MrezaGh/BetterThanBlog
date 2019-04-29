@@ -6,11 +6,19 @@ import android.os.Bundle;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.View;
+import android.widget.LinearLayout;
+import android.widget.TextView;
 
-import com.td.mreza.betterthanblog.R;
+import java.util.ArrayList;
+import java.util.HashMap;
 
-public class MainActivity extends AppCompatActivity  implements View.OnClickListener{
+public class MainActivity extends AppCompatActivity  implements View.OnClickListener, Observer{
+
+    LinearLayout linearLayout;
+    MessageController messageController;
+    NotificationCenter notificationCenter;
 
     private int mColumnCount = 3;
     private RecyclerView recyclerView;
@@ -22,11 +30,17 @@ public class MainActivity extends AppCompatActivity  implements View.OnClickList
         setContentView(R.layout.activity_main);
         context = this;
 
+        notificationCenter = new NotificationCenter();
+        messageController = new MessageController(getBaseContext(), notificationCenter);
+        notificationCenter.register(this);
+
+
+
         findViewById(R.id.btnAddColumn).setOnClickListener(this);
         findViewById(R.id.btnDecreaseColumn).setOnClickListener(this);
         recyclerView = (RecyclerView) findViewById(R.id.list);
         setLayoutManager();
-        recyclerView.setAdapter(new CardsAdapter(com.guna.dynamicrecyclerview.DummyContent.ITEMS));
+        recyclerView.setAdapter(new CardsAdapter(DummyContent.ITEMS));
     }
 
     @Override
@@ -51,4 +65,46 @@ public class MainActivity extends AppCompatActivity  implements View.OnClickList
             recyclerView.setLayoutManager(new GridLayoutManager(context, mColumnCount));
         }
     }
+
+    @Override
+    public void update() {
+
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                MainActivity.this.updateList();
+            }
+        });
+    }
+
+    private void updateList() {
+        HashMap list =messageController.cache;
+        ArrayList<TextView> tvs = new ArrayList<>();
+//        for (Integer s:list) {
+//            TextView tv=new TextView(getApplicationContext());
+//            tv.setText(s.toString());
+//            tvs.add(tv);
+//
+//        }
+        Log.i("Threadd", Thread.currentThread().getName());
+        ArrayList<TextView> tvsNew = new ArrayList<>();
+        for (int i = 0; i <tvs.size() ; i++) {
+            if(i>tvs.size()-11) {
+                tvsNew.add(tvs.get(i));
+            }
+        }
+        for (TextView t: tvsNew) {
+            linearLayout.addView(t);
+        }
+    }
+
+    @Override
+    public void setSubject(Subject sub) {
+        this.topic=sub;
+    }
+
+    private String name;
+    private Subject topic;
+
+
 }
