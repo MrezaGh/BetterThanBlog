@@ -1,20 +1,25 @@
 package com.td.mreza.betterthanblog;
 
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
 
+import org.json.JSONArray;
+
 import java.util.List;
 
 public class CardsAdapter extends RecyclerView.Adapter<CardsAdapter.ViewHolder> {
 
-    private final List<DummyContent.DummyItem> mValues;
+    private final List<DummyContent.Post> mValues;
 
-    public CardsAdapter(List<DummyContent.DummyItem> items) {
-        mValues = items;
+    public CardsAdapter(JSONArray items) {
+
+        DummyContent posts = new DummyContent(items);
+        mValues = posts.ITEMS;
     }
 
     @Override
@@ -26,8 +31,8 @@ public class CardsAdapter extends RecyclerView.Adapter<CardsAdapter.ViewHolder> 
 
     @Override
     public void onBindViewHolder(final ViewHolder holder, int position) {
-        holder.mItem = mValues.get(position);
-        holder.mContentView.setText(mValues.get(position).content);
+        holder.mItem = mValues.get(0);
+        holder.mContentView.setText(mValues.get(0).title);
     }
 
     @Override
@@ -38,7 +43,7 @@ public class CardsAdapter extends RecyclerView.Adapter<CardsAdapter.ViewHolder> 
     public class ViewHolder extends RecyclerView.ViewHolder {
         public final View mView;
         public final TextView mContentView;
-        public DummyContent.DummyItem mItem;
+        public DummyContent.Post mItem;
 
         public ViewHolder(View view) {
             super(view);

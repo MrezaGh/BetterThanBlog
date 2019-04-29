@@ -11,6 +11,8 @@ import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import org.json.JSONArray;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -40,7 +42,8 @@ public class MainActivity extends AppCompatActivity  implements View.OnClickList
         findViewById(R.id.btnDecreaseColumn).setOnClickListener(this);
         recyclerView = (RecyclerView) findViewById(R.id.list);
         setLayoutManager();
-        recyclerView.setAdapter(new CardsAdapter(DummyContent.ITEMS));
+        messageController.fetch(0);
+
     }
 
     @Override
@@ -72,7 +75,7 @@ public class MainActivity extends AppCompatActivity  implements View.OnClickList
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                MainActivity.this.updateList();
+                recyclerView.setAdapter(new CardsAdapter((JSONArray) messageController.cache.get(0)));
             }
         });
     }

@@ -1,5 +1,9 @@
 package com.td.mreza.betterthanblog;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -16,30 +20,54 @@ public class DummyContent {
     /**
      * An array of sample (dummy) items.
      */
-    public static final List<DummyItem> ITEMS = new ArrayList<DummyItem>();
+    public static final List<Post> ITEMS = new ArrayList<>();
+    public JSONArray posts;
+
+    public DummyContent(JSONArray posts){
+        this.posts = posts;
+        for (int i = 0; i < posts.length(); i++) {
+            JSONObject jsonobject = null;
+            int id = 0;
+            int userID = 0;
+            String title = "";
+            String body = "";
+            try {
+                jsonobject = posts.getJSONObject(i);
+                id = jsonobject.getInt("id");
+                userID = jsonobject.getInt("userId");
+                title = jsonobject.getString("title");
+                body = jsonobject.getString("body");
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+            Post post = new Post(userID, id, title, body);
+            addItem(post);
+
+        }
+
+    }
 
     /**
      * A map of sample (dummy) items, by ID.
      */
-    public static final Map<String, DummyItem> ITEM_MAP = new HashMap<String, DummyItem>();
+    public static final Map<String, Post> ITEM_MAP = new HashMap<String, Post>();
 
     private static final int COUNT = 25;
 
-    static {
+//    static {
         // Add some sample items.
-        for (int i = 1; i <= COUNT; i++) {
-            addItem(createDummyItem(i));
-        }
-    }
+//        for (int i = 1; i <= COUNT; i++) {
+//            addItem(createPost(i));
+//        }
+//    }
 
-    private static void addItem(DummyItem item) {
+    private static void addItem(Post item) {
         ITEMS.add(item);
-        ITEM_MAP.put(item.id, item);
     }
 
-    private static DummyItem createDummyItem(int position) {
-        return new DummyItem(String.valueOf(position), "Item " + position, makeDetails(position));
-    }
+//    private static Post createPost(int position) {
+//        return new Post(String.valueOf(position), "Item " + position, makeDetails(position));
+//    }
 
     private static String makeDetails(int position) {
         StringBuilder builder = new StringBuilder();
@@ -53,20 +81,23 @@ public class DummyContent {
     /**
      * A dummy item representing a piece of content.
      */
-    public static class DummyItem {
-        public final String id;
-        public final String content;
-        public final String details;
+    public static class Post {
+        public final int id;
+        public final int userID;
+        public final String title;
+        public final String body;
 
-        public DummyItem(String id, String content, String details) {
+        public Post(int userID, int id, String title, String body) {
             this.id = id;
-            this.content = content;
-            this.details = details;
+            this.userID = userID;
+            this.title = title;
+            this.body = body;
+
         }
 
         @Override
         public String toString() {
-            return content;
+            return title;
         }
     }
 }
