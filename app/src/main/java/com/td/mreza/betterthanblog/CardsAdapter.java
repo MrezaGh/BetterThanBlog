@@ -31,8 +31,9 @@ public class CardsAdapter extends RecyclerView.Adapter<CardsAdapter.ViewHolder> 
 
     @Override
     public void onBindViewHolder(final ViewHolder holder, int position) {
+
         holder.mItem = mValues.get(0);
-        holder.mContentView.setText(mValues.get(0).title);
+        holder.mContentView.setText(mValues.get(position).title);
     }
 
     @Override
@@ -55,5 +56,6 @@ public class CardsAdapter extends RecyclerView.Adapter<CardsAdapter.ViewHolder> 
         public String toString() {
             return super.toString() + " '" + mContentView.getText() + "'";
         }
+
     }
 }
