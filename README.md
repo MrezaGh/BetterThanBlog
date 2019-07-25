@@ -1,3 +1,6 @@
+اعضای گروه:
+محمدرضا غمخوار ۹۵۱۰۶۴۹۴
+امیرحسین بحرامی 
 # BetterThanBlog
 <p>An android app that communicates with server and shows data like a social network(but you can just read!).</p>
 at the same time it's able to cache and use the cached data
